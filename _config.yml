@@ -1,3 +1,943 @@
-theme: jekyll-theme-minimal
-title: Octocat's homepage
-description: Bookmark this to keep an eye on my project updates!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viraj Dhamnaskar — Unity Game Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root {
+  --bg:       #0e0e10;
+  --bg2:      #141416;
+  --bg3:      #1a1a1e;
+  --bg4:      #202026;
+  --gold:     #e8a020;
+  --gold-dim: #a06e12;
+  --gold-glow:rgba(232,160,32,0.15);
+  --gold-line:rgba(232,160,32,0.25);
+  --white:    #f0ede8;
+  --muted:    #7a7870;
+  --faint:    #3a3836;
+  --mono:     'JetBrains Mono', monospace;
+  --display:  'Syne', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--display);
+  font-size: 16px;
+  line-height: 1.6;
+  cursor: none;
+  overflow-x: hidden;
+}
+
+/* CUSTOM CURSOR */
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: normal;
+}
+#cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1px solid var(--gold-line);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s ease, width 0.25s, height 0.25s, border-color 0.2s;
+}
+body:has(a:hover) #cursor { background: var(--bg); }
+body:has(a:hover) #cursor-ring { width: 52px; height: 52px; border-color: var(--gold); background: var(--gold-glow); }
+
+/* GRID BACKGROUND */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232,160,32,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,160,32,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+.vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(14,14,16,0.85) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.25rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(14,14,16,0.75);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--faint);
+}
+
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+}
+.nav-logo span { color: var(--muted); }
+
+.nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0; right: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+.nav-badge {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  border-radius: 2px;
+  letter-spacing: 0.08em;
+}
+.nav-badge::before { content: '▶ '; font-size: 0.5rem; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 4rem 5rem;
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-tag {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: fadeUp 0.5s ease both;
+}
+.hero-tag::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 1px;
+  background: var(--gold);
+}
+
+.hero-name {
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  animation: fadeUp 0.5s 0.08s ease both;
+}
+
+.hero-name .first {
+  display: block;
+  font-size: clamp(4rem, 10vw, 9rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--white);
+  line-height: 0.95;
+}
+
+.hero-name .last {
+  display: block;
+  font-size: clamp(2.2rem, 5.5vw, 5rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(240,237,232,0.28);
+  text-transform: uppercase;
+  margin-top: 0.15rem;
+  margin-left: 0.04em;
+}
+
+.hero-role {
+  font-family: var(--mono);
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  color: var(--gold);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.5s 0.15s ease both;
+}
+.hero-role .sep { color: var(--faint); margin: 0 0.6em; }
+
+.hero-bio {
+  max-width: 520px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  line-height: 1.9;
+  margin-bottom: 3rem;
+  font-weight: 300;
+  animation: fadeUp 0.5s 0.22s ease both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  animation: fadeUp 0.5s 0.3s ease both;
+}
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  background: var(--gold);
+  color: var(--bg);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  border-radius: 2px;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-gold:hover { background: #f0b030; transform: translateY(-2px); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  border: 1px solid var(--faint);
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  border-radius: 2px;
+  transition: border-color 0.2s, color 0.2s, transform 0.15s;
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+/* SCROLL INDICATOR */
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--faint);
+  animation: fadeUp 0.5s 0.5s ease both;
+}
+.scroll-hint::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--faint), transparent);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0%,100%{height:40px;opacity:0.5}
+  50%{height:56px;opacity:1}
+}
+
+/* SECTION BASE */
+.section {
+  position: relative;
+  z-index: 2;
+  padding: 6rem 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.section-label::before {
+  content: '';
+  width: 16px; height: 1px;
+  background: var(--gold);
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin-bottom: 3.5rem;
+  color: var(--white);
+}
+
+/* DIVIDER */
+.hdivider {
+  border: none;
+  border-top: 1px solid var(--faint);
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ABOUT */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.about-text p {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.95;
+  margin-bottom: 1.5rem;
+  font-weight: 300;
+}
+.about-text p strong {
+  color: var(--white);
+  font-weight: 400;
+}
+
+.about-panels { display: flex; flex-direction: column; gap: 1px; }
+
+.panel {
+  background: var(--bg2);
+  border: 1px solid var(--faint);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1px;
+}
+.panel-header {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--faint);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg3);
+}
+.panel-header::before {
+  content: '▸';
+  font-size: 0.6rem;
+}
+.panel-body { padding: 1.25rem; }
+
+.code-line {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 300;
+  margin-bottom: 0.4rem;
+  display: flex;
+  gap: 0.75rem;
+}
+.code-line .ln {
+  color: var(--faint);
+  user-select: none;
+  min-width: 1.5rem;
+  text-align: right;
+}
+.code-line .key { color: #6da4d4; }
+.code-line .val { color: #a0c878; }
+.code-line .str { color: #c8a060; }
+.code-line .comment { color: var(--faint); font-style: italic; }
+
+/* SKILLS */
+.skills-full {
+  background: var(--bg2);
+  border-top: 1px solid var(--faint);
+  border-bottom: 1px solid var(--faint);
+  position: relative;
+  z-index: 2;
+}
+.skills-full .section { max-width: 1200px; }
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--faint);
+  border: 1px solid var(--faint);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.skill-cell {
+  background: var(--bg2);
+  padding: 2rem 1.5rem;
+  transition: background 0.2s;
+  position: relative;
+}
+.skill-cell::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 1.5rem; right: 1.5rem;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+  transform-origin: left;
+}
+.skill-cell:hover { background: var(--bg3); }
+.skill-cell:hover::after { transform: scaleX(1); }
+
+.skill-icon {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  display: block;
+  filter: grayscale(0.3);
+}
+.skill-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.01em;
+}
+.skill-desc {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* PROJECT */
+.project-showcase {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--faint);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.project-visual {
+  background: var(--bg3);
+  position: relative;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--faint);
+  overflow: hidden;
+}
+
+
+
+.project-visual-label {
+  position: absolute;
+  top: 1.25rem; left: 1.25rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--gold-dim);
+}
+
+.project-info {
+  background: var(--bg2);
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.project-number {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-dim);
+  margin-bottom: 1rem;
+}
+.project-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+.project-desc {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.85;
+  font-weight: 300;
+  margin-bottom: 2rem;
+}
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+.project-tag {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--faint);
+  color: var(--muted);
+  border-radius: 2px;
+}
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  text-decoration: none;
+  transition: gap 0.2s;
+}
+.project-link:hover { gap: 0.85rem; }
+
+/* CONTACT */
+.contact-full {
+  background: var(--bg2);
+  border-top: 1px solid var(--faint);
+  position: relative;
+  z-index: 2;
+}
+.contact-full .section { max-width: 1200px; }
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.contact-headline {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+}
+.contact-headline .hl { color: var(--gold); }
+
+.contact-sub {
+  font-family: var(--mono);
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.9;
+  font-weight: 300;
+}
+
+.contact-items { display: flex; flex-direction: column; gap: 0; }
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--faint);
+  text-decoration: none;
+  transition: padding-left 0.25s;
+}
+.contact-item:first-child { border-top: 1px solid var(--faint); }
+.contact-item:hover { padding-left: 0.75rem; }
+
+.contact-item-icon {
+  width: 36px; height: 36px;
+  background: var(--bg3);
+  border: 1px solid var(--faint);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+.contact-item:hover .contact-item-icon {
+  border-color: var(--gold-dim);
+  background: var(--gold-glow);
+}
+
+.contact-item-text { flex: 1; }
+.contact-item-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: var(--gold-dim);
+  margin-bottom: 0.2rem;
+}
+.contact-item-value {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.contact-item:hover .contact-item-value { color: var(--white); }
+
+.contact-arrow {
+  font-size: 0.75rem;
+  color: var(--faint);
+  transition: color 0.2s, transform 0.2s;
+}
+.contact-item:hover .contact-arrow { color: var(--gold); transform: translateX(4px); }
+
+/* FOOTER */
+footer {
+  position: relative;
+  z-index: 2;
+  background: var(--bg);
+  border-top: 1px solid var(--faint);
+  padding: 1.75rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-left {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--faint);
+  letter-spacing: 0.06em;
+}
+.footer-left span { color: var(--gold-dim); }
+.footer-right {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{gap:1.25rem;}
+  .nav-badge{display:none;}
+  .hero{padding:7rem 1.5rem 5rem;}
+  .section{padding:4rem 1.5rem;}
+  .about-grid,.contact-grid{grid-template-columns:1fr;gap:3rem;}
+  .skills-grid{grid-template-columns:repeat(2,1fr);}
+  .project-showcase{grid-template-columns:1fr;}
+  .project-visual{min-height:220px;}
+  .project-visual{border-right:none;border-bottom:1px solid var(--faint);}
+  footer{padding:1.5rem;flex-direction:column;gap:0.5rem;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="grid-bg"></div>
+<div class="vignette"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span>//</span> vd.exe</a>
+  <ul class="nav-links">
+    <li><a href="#about">about</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#contact">contact</a></li>
+    <li><span class="nav-badge">available</span></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-tag">Unity Game Developer · B.Tech CSE · 2024–28</p>
+  <h1 class="hero-name">
+    <span class="first">VIRAJ</span>
+    <span class="last">DHAMNASKAR</span>
+  </h1>
+  <p class="hero-role">
+    Game Programmer
+    <span class="sep">/</span>
+    C# · Unity
+    <span class="sep">/</span>
+    Blender
+  </p>
+  <p class="hero-bio">
+    // Engineering student building games from scratch.<br>
+    // I turn ideas into playable experiences — mechanics, systems, and worlds.<br>
+    // Currently: 1 shipped title &amp; levelling up.
+  </p>
+  <div class="hero-actions">
+    <a href="#projects" class="btn-gold">▶ &nbsp;View my game</a>
+    <a href="#contact" class="btn-outline">Get in touch →</a>
+  </div>
+  <div class="scroll-hint">scroll</div>
+</div>
+
+<hr class="hdivider">
+
+<!-- ABOUT -->
+<div class="section" id="about">
+  <p class="section-label">01 — about</p>
+  <h2 class="section-title">Player One.</h2>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>I'm <strong>Viraj</strong> — a first-year B.Tech Computer Science student at heart and a game developer by obsession. I started making games because I wanted to understand how the worlds I played in actually <strong>worked</strong>.</p>
+      <p>My workflow lives in <strong>Unity and C#</strong> — scripting mechanics, building systems, and sweating the small stuff until a game feels right to play. I use <strong>Blender</strong> for 3D assets when I need something custom, and <strong>Git + GitHub</strong> to keep everything sane.</p>
+      <p>I've shipped one game on itch.io and I'm building the next. Every project teaches me something new about the craft — and I'm just getting started.</p>
+    </div>
+    <div class="about-panels">
+      <div class="panel">
+        <div class="panel-header">PlayerProfile.cs</div>
+        <div class="panel-body">
+          <div class="code-line"><span class="ln">1</span><span class="comment">// Viraj Dhamnaskar</span></div>
+          <div class="code-line"><span class="ln">2</span><span class="key">string</span>&nbsp;<span class="val">role</span>&nbsp;=&nbsp;<span class="str">"Game Developer"</span>;</div>
+          <div class="code-line"><span class="ln">3</span><span class="key">string</span>&nbsp;<span class="val">degree</span>&nbsp;=&nbsp;<span class="str">"B.Tech CSE"</span>;</div>
+          <div class="code-line"><span class="ln">4</span><span class="key">string</span>&nbsp;<span class="val">batch</span>&nbsp;=&nbsp;<span class="str">"2024 – 2028"</span>;</div>
+          <div class="code-line"><span class="ln">5</span><span class="key">int</span>&nbsp;<span class="val">gamesShipped</span>&nbsp;=&nbsp;<span class="str">1</span>;</div>
+          <div class="code-line"><span class="ln">6</span><span class="key">bool</span>&nbsp;<span class="val">openToWork</span>&nbsp;=&nbsp;<span class="str">true</span>;</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">Tools &amp; Engine</div>
+        <div class="panel-body">
+          <div class="code-line"><span class="ln">1</span><span class="comment">// Primary stack</span></div>
+          <div class="code-line"><span class="ln">2</span><span class="val">engine</span>:&nbsp;&nbsp;&nbsp;<span class="str">Unity (URP)</span></div>
+          <div class="code-line"><span class="ln">3</span><span class="val">language</span>:&nbsp;<span class="str">C#</span></div>
+          <div class="code-line"><span class="ln">4</span><span class="val">modeling</span>:&nbsp;<span class="str">Blender</span></div>
+          <div class="code-line"><span class="ln">5</span><span class="val">vcs</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">Git + GitHub</span></div>
+          <div class="code-line"><span class="ln">6</span><span class="val">platform</span>:&nbsp;<span class="str">itch.io</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="hdivider">
+
+<!-- SKILLS -->
+<div class="skills-full" id="skills">
+  <div class="section">
+    <p class="section-label">02 — skills</p>
+    <h2 class="section-title">My toolkit.</h2>
+    <div class="skills-grid">
+      <div class="skill-cell">
+        <span class="skill-icon">⚙️</span>
+        <p class="skill-name">Unity Engine</p>
+        <p class="skill-desc">Scene building, URP pipelines, physics, animation, UI Toolkit, and full game architecture.</p>
+      </div>
+      <div class="skill-cell">
+        <span class="skill-icon">💻</span>
+        <p class="skill-name">C# Programming</p>
+        <p class="skill-desc">Game logic, component systems, coroutines, ScriptableObjects, and clean code patterns.</p>
+      </div>
+      <div class="skill-cell">
+        <span class="skill-icon">🎨</span>
+        <p class="skill-name">Blender</p>
+        <p class="skill-desc">3D modelling, UV unwrapping, basic rigging, and exporting assets ready for Unity.</p>
+      </div>
+      <div class="skill-cell">
+        <span class="skill-icon">🔧</span>
+        <p class="skill-name">Git &amp; GitHub</p>
+        <p class="skill-desc">Version control, branching, pull requests, and open-source publishing on GitHub.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<div class="section" id="projects">
+  <p class="section-label">03 — projects</p>
+  <h2 class="section-title">Shipped.</h2>
+  <div class="project-showcase">
+    <div class="project-visual">
+      <span class="project-visual-label">// lamp.io — 2024</span>
+      <img src="gameicon.png" 
+           alt="lamp.io screenshot" 
+           style="width:100%;height:100%;object-fit:cover;display:block;">
+    </div>
+    <div class="project-info">
+      <p class="project-number">PROJECT_01 / SHIPPED</p>
+      <h3 class="project-title">lamp.io</h3>
+      <p class="project-desc">
+        Step into the shadows as a glowing yellow cube on a mission to find the light. Navigate dark environments using platforming skills, manage your <span style="color:var(--gold);font-style:italic">AURA</span> — collect warm white lamps to grow it, dodge the red ones that drain it.
+      </p>
+      <div class="project-tags">
+        <span class="project-tag">Unity</span>
+        <span class="project-tag">C#</span>
+        <span class="project-tag">Blender</span>
+        <span class="project-tag">2D Platformer</span>
+        <span class="project-tag">itch.io</span>
+      </div>
+      <a href="https://rootvikk.itch.io/" class="project-link" target="_blank">
+        Play on itch.io &nbsp;→
+      </a>
+    </div>
+  </div>
+
+  <!-- Feature pills -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--faint);border:1px solid var(--faint);border-top:none;border-radius:0 0 3px 3px;overflow:hidden;">
+    <div style="background:var(--bg2);padding:1.25rem 1.5rem;">
+      <p style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.14em;color:var(--gold-dim);margin-bottom:0.4rem;">MECHANIC_01</p>
+      <p style="font-size:0.88rem;font-weight:600;color:var(--white);margin-bottom:0.3rem;">Classic Platforming</p>
+      <p style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);font-weight:300;">Precise movement, jumps, and gap-clearing across stark dark levels.</p>
+    </div>
+    <div style="background:var(--bg2);padding:1.25rem 1.5rem;">
+      <p style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.14em;color:var(--gold-dim);margin-bottom:0.4rem;">MECHANIC_02</p>
+      <p style="font-size:0.88rem;font-weight:600;color:var(--white);margin-bottom:0.3rem;">Aura System</p>
+      <p style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);font-weight:300;">White lamps build your score. Red lamps dim your progress. Choose wisely.</p>
+    </div>
+    <div style="background:var(--bg2);padding:1.25rem 1.5rem;">
+      <p style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.14em;color:var(--gold-dim);margin-bottom:0.4rem;">MECHANIC_03</p>
+      <p style="font-size:0.88rem;font-weight:600;color:var(--white);margin-bottom:0.3rem;">Minimalist Aesthetic</p>
+      <p style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);font-weight:300;">High-contrast visuals with dynamic lighting — every shadow tells a story.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="hdivider">
+
+<!-- CONTACT -->
+<div class="contact-full" id="contact">
+  <div class="section">
+    <div class="contact-grid">
+      <div>
+        <p class="section-label">04 — contact</p>
+        <h2 class="contact-headline">Let's build<br>something <span class="hl">fun.</span></h2>
+        <p class="contact-sub">
+          Open to game jam collabs, internships, freelance work, or just talking shop about Unity and game design. Reach out on any platform — I check everything.
+        </p>
+      </div>
+      <div class="contact-items">
+        <a href="mailto:virajdhamnaskar7@gmail.com" class="contact-item">
+          <div class="contact-item-icon">✉</div>
+          <div class="contact-item-text">
+            <p class="contact-item-label">EMAIL</p>
+            <p class="contact-item-value">virajdhamnaskar7@gmail.com</p>
+          </div>
+          <span class="contact-arrow">→</span>
+        </a>
+        <a href="https://github.com/rootvikk" target="_blank" class="contact-item">
+          <div class="contact-item-icon">⌥</div>
+          <div class="contact-item-text">
+            <p class="contact-item-label">GITHUB</p>
+            <p class="contact-item-value">github.com/rootvikk</p>
+          </div>
+          <span class="contact-arrow">→</span>
+        </a>
+        <a href="https://www.linkedin.com/in/viraj-dhamnaskar/" target="_blank" class="contact-item">
+          <div class="contact-item-icon">in</div>
+          <div class="contact-item-text">
+            <p class="contact-item-label">LINKEDIN</p>
+            <p class="contact-item-value">Viraj Dhamnaskar</p>
+          </div>
+          <span class="contact-arrow">→</span>
+        </a>
+        <a href="https://rootvikk.itch.io/" target="_blank" class="contact-item">
+          <div class="contact-item-icon">🎮</div>
+          <div class="contact-item-text">
+            <p class="contact-item-label">ITCH.IO</p>
+            <p class="contact-item-value">rootvikk.itch.io</p>
+          </div>
+          <span class="contact-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-left">© 2026 <span>Viraj Dhamnaskar</span>. Built with HTML, CSS &amp; a lot of coffee.</p>
+  <p class="footer-right">// vd.exe — runtime: active</p>
+</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+});
+
+(function loop() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(loop);
+})();
+
+// Fade-in on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.animation = 'fadeUp 0.5s ease both';
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.skill-cell, .panel, .project-info, .contact-item').forEach(el => {
+  el.style.opacity = '0';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
